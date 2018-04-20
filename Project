@@ -1,0 +1,52 @@
+#include<stdio.h>
+#include<pthread.h>
+#include<stdlib.h>
+#include<time.h>
+static int c=0,d=0;
+struct student
+{
+int b,r;
+char name;
+}s[10];
+void assign_gift()
+{int i,num;
+for(i=0;i<10;i++)
+{
+num=rand()%11;
+s[i].r=num;
+s[i].b=0;
+s[i].name=97+i;
+}
+}
+void *billing()
+{
+int max=0,i;
+for(i=0;i<10;i++)
+{
+if((s[i].r)>=max && (s[i].b==0))
+ {
+   max=s[i].r;
+   c=i;
+ }
+}
+s[c].b=1;
+printf("%c %22d\n",s[c].name,max);
+}
+int main()
+{
+pthread_t t1[10];
+int i;
+printf("Welcome to bill counter\n\n");
+srand(time(0));
+assign_gift();
+printf("Bill Order       No of Gifts\n");
+for(i=0;i<10;i++)
+{
+ pthread_create(&t1[i],NULL,billing,NULL);
+}
+for(i=0;i<10;i++)
+{
+pthread_join(t1[i],NULL);
+}
+}
+
